@@ -2,9 +2,10 @@
 
 namespace Urisoft;
 
+use DateTime;
+use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Psr\Log\InvalidArgumentException;
 
 class FileLogger implements LoggerInterface
 {
@@ -14,11 +15,11 @@ class FileLogger implements LoggerInterface
      * Constructor to initialize the log file path.
      * If no file is provided, it falls back to error_log().
      *
-     * @param string|null $logFile The file where logs will be stored. If null, uses error_log.
+     * @param null|string $logFile The file where logs will be stored. If null, uses error_log.
      */
     public function __construct(?string $logFile = null)
     {
-        if ($logFile && is_writable(dirname($logFile))) {
+        if ($logFile && is_writable(\dirname($logFile))) {
             $this->logFile = $logFile;
         } else {
             $this->logFile = null;
@@ -32,11 +33,11 @@ class FileLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      *
-     * @return void
-     *
      * @throws InvalidArgumentException If the log level is invalid.
+     *
+     * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $levels = [
             LogLevel::EMERGENCY,
@@ -49,7 +50,7 @@ class FileLogger implements LoggerInterface
             LogLevel::DEBUG,
         ];
 
-        if (!in_array($level, $levels)) {
+        if ( ! \in_array($level, $levels, true)) {
             throw new InvalidArgumentException('Invalid log level: ' . $level);
         }
 
@@ -57,9 +58,9 @@ class FileLogger implements LoggerInterface
         $message = $this->interpolate($message, $context);
 
         // Format the log entry with timestamp, level, and message
-        $logEntry = sprintf(
+        $logEntry = \sprintf(
             "[%s] %s: %s",
-            (new \DateTime())->format('Y-m-d H:i:s'),
+            (new DateTime())->format('Y-m-d H:i:s'),
             strtoupper($level),
             $message
         );
@@ -80,7 +81,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function emergency($message, array $context = [])
+    public function emergency($message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
@@ -93,7 +94,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
@@ -106,7 +107,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
@@ -119,7 +120,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function error($message, array $context = [])
+    public function error($message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
@@ -132,7 +133,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
@@ -145,7 +146,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
@@ -158,7 +159,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function info($message, array $context = [])
+    public function info($message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
@@ -171,7 +172,7 @@ class FileLogger implements LoggerInterface
      *
      * @return void
      */
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
